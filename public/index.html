@@ -264,6 +264,7 @@
         let laneIndex = 0;
         let photoInterval;
         let lastSpawnTimes = [];
+        let hasStarted = false;
 
         function getLanes() {
             const laneCount = window.innerWidth < 768 ? 3 : 4;
@@ -358,6 +359,8 @@
         }
 
         function startJourney(el) {
+            if (hasStarted) return;
+            hasStarted = true;
             audio.load();
             audio.play().then(() => {
                 el.style.transform = 'scale(0)';
@@ -369,25 +372,29 @@
                         startPhotos();
                     }
                 });
-            }).catch(() => alert('Tap again'));
+            }).catch(() => {
+                hasStarted = false;
+                alert('Tap again');
+            });
+
+            audio.addEventListener('ended', () => {
+                if (!hasStarted) return;
+                cleanupPhotos();
+                document.querySelectorAll('.stage').forEach((el) => el.classList.remove('active'));
+
+                const finale = document.getElementById('stage-4');
+                finale.classList.add('active');
+
+                const tl = gsap.timeline();
+                tl.to('#stage-4', { opacity: 1, duration: 1 })
+                    .to('#t0', { opacity: 1, duration: 1 }, '-=0.4')
+                    .to('#t1', { opacity: 1, scale: 1, duration: 1.6, ease: 'back.out(1.4)' })
+                    .to('#t2', { opacity: 1, scale: 1, duration: 1.4, ease: 'back.out(1.4)' }, '-=1')
+                    .to('#t3', { opacity: 1, y: 0, duration: 1.2 }, '-=0.6')
+                    .to('#t4', { opacity: 1, duration: 1 }, '-=0.3')
+                    .call(launchConfetti);
+            }, { once: true });
         }
-
-        audio.addEventListener('ended', () => {
-            cleanupPhotos();
-            document.querySelectorAll('.stage').forEach((el) => el.classList.remove('active'));
-
-            const finale = document.getElementById('stage-4');
-            finale.classList.add('active');
-
-            const tl = gsap.timeline();
-            tl.to('#stage-4', { opacity: 1, duration: 1 })
-                .to('#t0', { opacity: 1, duration: 1 }, '-=0.4')
-                .to('#t1', { opacity: 1, scale: 1, duration: 1.6, ease: 'back.out(1.4)' })
-                .to('#t2', { opacity: 1, scale: 1, duration: 1.4, ease: 'back.out(1.4)' }, '-=1')
-                .to('#t3', { opacity: 1, y: 0, duration: 1.2 }, '-=0.6')
-                .to('#t4', { opacity: 1, duration: 1 }, '-=0.3')
-                .call(launchConfetti);
-        });
 
         function launchConfetti() {
             const end = Date.now() + 6000;
