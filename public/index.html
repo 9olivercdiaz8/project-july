@@ -9,55 +9,164 @@
     <script src="assets/confetti.js"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
-    
+
     <style>
-        body { 
-            background: radial-gradient(circle at bottom, #1b2735 0%, #090a0f 100%); 
-            color: #fff; 
-            font-family: 'Montserrat', sans-serif; 
-            height: 100vh; 
-            overflow: hidden; 
-            user-select: none; 
+        :root {
+            color-scheme: dark;
         }
-        .font-cine { font-family: 'Cinzel', serif; }
-        
-        /* ESTRELLAS */
-        .stars-container { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
-        .star { position: absolute; background: white; border-radius: 50%; animation: twinkle var(--dur) infinite; opacity: 0; }
-        @keyframes twinkle { 0%, 100% { opacity: 0; transform: scale(0.5); } 50% { opacity: 1; transform: scale(1.2); } }
-        
-        /* CAPAS (Z-INDEX CRÍTICO) */
-        .stage { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; opacity: 0; pointer-events: none; transition: opacity 1s; }
-        .stage.active { opacity: 1; pointer-events: auto; }
-        
-        #stage-1 { z-index: 100; } /* Intro */
-        #stage-2 { z-index: 40; }  /* Fotos */
-        #stage-3 { z-index: 80; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); } /* Biometric (ENCIMA DE FOTOS) */
-        #stage-4 { z-index: 90; background: black; } /* Final */
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            background: radial-gradient(circle at 20% 120%, #243b55 0%, #141e30 40%, #0b0d14 100%);
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            user-select: none;
+        }
+        .font-cine {
+            font-family: 'Cinzel', serif;
+        }
+
+        /* STARS */
+        .stars-container {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .star {
+            position: absolute;
+            width: var(--size);
+            height: var(--size);
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            opacity: 0;
+            animation: twinkle var(--dur) ease-in-out infinite;
+            filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.8));
+        }
+        .star.slow {
+            animation-duration: calc(var(--dur) * 1.7);
+        }
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0.2;
+                transform: scale(0.6) translate3d(0, 0, 0);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.2) translate3d(0, 0, 0);
+            }
+        }
+
+        /* STAGES */
+        .stage {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1s;
+        }
+        .stage.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        #stage-1 {
+            z-index: 100;
+        }
+        #stage-2 {
+            z-index: 40;
+        }
+        #stage-4 {
+            z-index: 90;
+            background: radial-gradient(circle at 50% 120%, #10131d 0%, #040407 65%, #000 100%);
+        }
 
         /* INTRO */
-        .gift-box { width: 140px; height: 140px; background: linear-gradient(135deg, #ec4899, #be185d); position: relative; cursor: pointer; box-shadow: 0 0 60px rgba(236, 72, 153, 0.6); display: flex; align-items: center; justify-content: center; border: 2px solid rgba(255,255,255,0.4); }
-        .ribbon-v { position: absolute; width: 24px; height: 100%; background: #fce7f3; left: 50%; transform: translateX(-50%); }
-        .ribbon-h { position: absolute; height: 24px; width: 100%; background: #fce7f3; top: 50%; transform: translateY(-50%); }
+        .gift-box {
+            width: 140px;
+            height: 140px;
+            background: linear-gradient(135deg, #ec4899, #be185d);
+            position: relative;
+            cursor: pointer;
+            box-shadow: 0 0 60px rgba(236, 72, 153, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+        }
+        .ribbon-v {
+            position: absolute;
+            width: 24px;
+            height: 100%;
+            background: #fce7f3;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .ribbon-h {
+            position: absolute;
+            height: 24px;
+            width: 100%;
+            background: #fce7f3;
+            top: 50%;
+            transform: translateY(-50%);
+        }
 
-        /* FOTOS (GRID) */
+        /* PHOTO LANES */
+        #photo-space {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
         .photo-card {
             position: absolute;
-            width: 30vw; height: 40vh;
-            background: #fff; padding: 4px; padding-bottom: 12px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.8);
-            transform-origin: center; will-change: transform;
-            top: 110vh;
+            width: clamp(170px, 18vw, 230px);
+            height: clamp(230px, 26vw, 320px);
+            background: #fff;
+            padding: 6px 6px 16px 6px;
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.75);
+            border-radius: 8px;
+            will-change: transform;
+            transform: translate3d(-50%, 0, 0);
         }
-        .photo-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .photo-card::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 6px;
+            height: 5px;
+            background: linear-gradient(90deg, rgba(236, 72, 153, 0.2), rgba(255, 255, 255, 0));
+            opacity: 0.5;
+        }
+        .photo-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            border-radius: 6px;
+        }
 
-        /* ESCANER (UI MEJORADA) */
-        .scanner-ui { width: 280px; padding: 25px; background: rgba(0, 20, 0, 0.6); border: 2px solid #0f0; border-radius: 16px; text-align: center; display: flex; flex-direction: column; align-items: center; box-shadow: 0 0 60px rgba(0,255,0,0.3); }
-        .finger-zone { width: 90px; height: 110px; border: 2px dashed #0f0; margin: 25px 0; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; border-radius: 8px; }
-        .scan-bar { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: #0f0; box-shadow: 0 0 15px #0f0; animation: scan 1.2s infinite ease-in-out; }
-        @keyframes scan { 0% {top:-10%; opacity:0;} 20% {opacity:1;} 80% {opacity:1;} 100% {top:110%; opacity:0;} }
-        
-        .glow-text { text-shadow: 0 0 30px rgba(255,255,255,0.8); }
+        /* FINAL */
+        .glow-text {
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+        }
+        .finale-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 24px;
+            border-radius: 18px;
+            backdrop-filter: blur(10px);
+        }
     </style>
 </head>
 <body>
@@ -66,7 +175,7 @@
     <div class="stars-container" id="stars"></div>
 
     <div id="stage-1" class="stage active">
-        <p class="text-gray-400 tracking-widest text-xs uppercase mb-8 animate-pulse">Touch Gift</p>
+        <p class="text-gray-300 tracking-widest text-xs uppercase mb-8 animate-pulse">Touch Gift</p>
         <div class="gift-box" onclick="startJourney(this)">
             <div class="ribbon-v"></div><div class="ribbon-h"></div>
             <i id="play-icon" class="ph-fill ph-play text-white text-5xl relative z-10 animate-pulse"></i>
@@ -74,175 +183,255 @@
         <p class="mt-8 text-xl font-cine text-white tracking-widest">FOR YOU</p>
     </div>
 
-    <div id="stage-2" class="stage z-40">
-        <div id="photo-space" class="absolute inset-0 w-full h-full"></div>
-    </div>
-
-    <div id="stage-3" class="stage">
-        <div class="scanner-ui transform scale-0" id="scanner-box"> <i class="ph-fill ph-shield-check text-5xl text-green-500 mb-2"></i>
-            <h2 class="text-xl font-cine text-green-400 tracking-[0.2em]">SECURITY</h2>
-            <div class="finger-zone">
-                <div class="scan-bar"></div>
-                <i class="ph-fill ph-fingerprint text-6xl text-green-600"></i>
-            </div>
-            <p id="bio-msg" class="text-green-500 font-mono text-xs font-bold animate-pulse">SYSTEM LOCKED</p>
-            <p class="text-gray-400 text-[9px] mt-2 uppercase tracking-widest">Identifying Subject...</p>
-        </div>
+    <div id="stage-2" class="stage">
+        <div id="photo-space"></div>
     </div>
 
     <div id="stage-4" class="stage">
         <div class="relative z-10 text-center px-4">
-            <h1 class="text-5xl md:text-7xl font-cine text-white mb-6 glow-text opacity-0" id="t1">HAPPY<br>BIRTHDAY</h1>
-            <h2 class="text-3xl md:text-5xl font-cine text-pink-500 mb-10 drop-shadow-2xl opacity-0" id="t2">MOMMY</h2>
-            
-            <div class="bg-white/10 border border-white/20 p-6 rounded-xl max-w-sm mx-auto backdrop-blur-md opacity-0 transform translate-y-10" id="t3">
-                <i class="ph-fill ph-baby text-5xl text-pink-300 mb-4"></i>
-                <p class="text-lg italic font-serif text-gray-200">"The best gift is growing inside you."</p>
+            <p class="uppercase tracking-[0.4em] text-xs text-pink-200 opacity-0" id="t0">For the love of my life</p>
+            <h1 class="text-5xl md:text-7xl font-cine text-white mb-6 glow-text opacity-0" id="t1">Happy Birthday</h1>
+            <h2 class="text-3xl md:text-5xl font-cine text-pink-500 mb-8 drop-shadow-2xl opacity-0" id="t2">Mommy</h2>
+
+            <div class="finale-card max-w-sm mx-auto opacity-0 transform translate-y-10" id="t3">
+                <i class="ph-fill ph-heart text-5xl text-pink-300 mb-4"></i>
+                <p class="text-lg italic font-serif text-gray-100">"Every moment with you is a treasure."</p>
             </div>
-            <p class="mt-16 text-[10px] text-gray-500 uppercase tracking-widest opacity-0" id="t4">July 2026</p>
+            <p class="mt-12 text-[10px] text-gray-400 uppercase tracking-widest opacity-0" id="t4">Forever & Always</p>
         </div>
     </div>
 
     <script>
-        // --- ESTRELLAS ---
         const stars = document.getElementById('stars');
-        for(let i=0; i<80; i++) {
-            let s = document.createElement('div'); s.className='star';
-            s.style.top=Math.random()*100+'%'; s.style.left=Math.random()*100+'%';
-            s.style.width=Math.random()*2+'px'; s.style.height=s.style.width;
-            s.style.setProperty('--dur', (Math.random()*3+1)+'s'); stars.appendChild(s);
+        for (let i = 0; i < 110; i += 1) {
+            const s = document.createElement('div');
+            s.className = 'star' + (Math.random() > 0.6 ? ' slow' : '');
+            s.style.top = Math.random() * 100 + '%';
+            s.style.left = Math.random() * 100 + '%';
+            s.style.setProperty('--size', (Math.random() * 2 + 1) + 'px');
+            s.style.setProperty('--dur', (Math.random() * 3 + 2) + 's');
+            stars.appendChild(s);
         }
 
-        // --- CONFIG ---
-        const ALL_PHOTOS = [ 'PXL_20250906_021905799.jpg', 'PXL_20250913_133140007.jpg', 'PXL_20250920_162538609.jpg', 'PXL_20250921_110623205.jpg', 'PXL_20251008_040502409.jpg', 'PXL_20251014_101226303.jpg', 'PXL_20251017_023456019.MP.jpg', 'PXL_20251019_130218312.NIGHT.jpg', 'PXL_20251019_130702511.NIGHT.jpg', 'PXL_20251021_104934088.jpg', 'PXL_20251022_060637296.jpg', 'PXL_20251024_124903936.jpg', 'PXL_20251024_124906135.MP.jpg', 'PXL_20251024_124916632.jpg', 'PXL_20251026_113317130.NIGHT.jpg', 'PXL_20251026_113327949.NIGHT.jpg', 'PXL_20251027_085113382.jpg', 'PXL_20251027_122411788.MP.jpg', 'PXL_20251028_115616010.jpg', 'PXL_20251031_091950675.jpg', 'PXL_20251102_153805991.jpg', 'PXL_20251103_161337525.jpg', 'PXL_20251103_163207980.jpg', 'PXL_20251103_163529676.jpg', 'PXL_20251103_163804817.MP.jpg', 'PXL_20251103_163936702.jpg', 'PXL_20251103_163941499.jpg', 'PXL_20251104_060636618.jpg', 'PXL_20251106_131826014.jpg', 'PXL_20251123_234406985.jpg', 'PXL_20251123_234451121.jpg', 'PXL_20251129_140019564.MP.jpg', 'PXL_20251129_142942873.jpg', 'PXL_20251129_142948169.jpg', 'PXL_20251129_143026708.jpg', 'PXL_20251129_143039367.jpg', 'PXL_20251129_143050977.MP.jpg', 'PXL_20251130_051445753-COLLAGE.jpg', 'PXL_20251130_051453816.jpg', 'PXL_20251130_051507264.jpg', 'PXL_20251130_091835001.MP.jpg', 'PXL_20251130_091932474.MP.jpg', 'PXL_20251130_092518680.jpg', 'PXL_20251130_092603326.MP.jpg', 'PXL_20251201_041404347.MP.jpg', 'PXL_20251207_070848795.jpg', 'PXL_20251207_070900630.jpg', 'PXL_20251209_043920652.MP.jpg', 'PXL_20251210_050753936.jpg', 'PXL_20251212_143352032.jpg', 'PXL_20251214_090837819.jpg', 'PXL_20251214_155925353.MP.jpg', 'PXL_20251214_160219604.jpg', 'PXL_20251214_160222707.MP.jpg', 'PXL_20251214_160233290.jpg', 'PXL_20251215_070006569.MP.jpg', 'PXL_20251218_120455189.jpg', 'PXL_20251220_070612145.jpg', 'PXL_20251220_070613204.jpg', 'PXL_20251220_070631900.jpg', 'PXL_20251220_070637895.MP.jpg', 'PXL_20251222_004419704.jpg', 'PXL_20251224_161217392.jpg', 'PXL_20251224_161219562.jpg', 'PXL_20251228_002003815.jpg', 'PXL_20251229_043540702.MP.jpg', 'PXL_20260102_070840989.jpg', 'PXL_20260102_070904209.MP.jpg', 'PXL_20260102_070915361.MP.jpg', 'PXL_20260102_071047502.MP.jpg', 'PXL_20260102_071113844.MP.jpg', 'PXL_20260102_071422344.MP.jpg', 'PXL_20260102_072125592.PORTRAIT.jpg', 'PXL_20260102_073559766.PORTRAIT.jpg', 'PXL_20260102_073622861.PORTRAIT.jpg', 'PXL_20260102_073626023.PORTRAIT.jpg', 'PXL_20260102_073807803.PORTRAIT.jpg', 'PXL_20260102_073809756.PORTRAIT.jpg', 'PXL_20260102_073817037.PORTRAIT.jpg', 'PXL_20260102_074136186.PORTRAIT.jpg', 'PXL_20260102_074239317.PORTRAIT.jpg', 'PXL_20260103_053022295.MP.jpg', 'PXL_20260103_071032461.PORTRAIT.jpg', 'PXL_20260103_074508976.jpg', 'PXL_20260103_074530845.jpg', 'PXL_20260103_074556639.jpg', 'PXL_20260103_074601712.jpg', 'PXL_20260103_074606471.jpg', 'PXL_20260103_074633946.jpg', 'PXL_20260104_001237871.jpg', 'PXL_20260104_001720018.jpg', 'PXL_20260104_001722317.jpg', 'PXL_20260104_001728589.jpg', 'PXL_20260104_001809885.jpg', 'PXL_20260104_004943413.PORTRAIT.jpg', 'PXL_20260104_010749097.jpg', 'PXL_20260104_011046911.jpg', 'PXL_20260104_011051326.jpg', 'PXL_20260104_011610049.PORTRAIT.jpg', 'PXL_20260104_020012539.jpg', 'PXL_20260104_020403817.PORTRAIT.jpg', 'PXL_20260104_022114612.jpg', 'PXL_20260104_022124683.jpg', 'PXL_20260104_032728334.jpg', 'PXL_20260104_032742621.PORTRAIT.jpg', 'PXL_20260104_040600481.jpg', 'PXL_20260104_040616005.jpg', 'PXL_20260104_042325442.jpg', 'PXL_20260104_042732058.jpg', 'PXL_20260104_042737635.jpg', 'PXL_20260104_042752097.jpg', 'PXL_20260104_044010633.jpg', 'PXL_20260104_044053957.jpg', 'PXL_20260104_044109816.jpg', 'PXL_20260104_054039294.jpg', 'PXL_20260104_054523542.jpg', 'PXL_20260104_054732262.jpg', 'PXL_20260104_061032241.jpg', 'PXL_20260104_125755486.jpg', 'PXL_20260104_130506402.jpg', 'PXL_20260105_045023769.jpg', 'PXL_20260105_045201816.jpg', 'PXL_20260105_045605720.NIGHT.jpg', 'PXL_20260105_045801730.PORTRAIT.ORIGINAL.jpg', 'PXL_20260105_055639096.jpg', 'PXL_20260105_055833529.jpg', 'PXL_20260105_055919088.jpg', 'PXL_20260105_060258948.jpg', 'PXL_20260105_060343561.jpg', 'PXL_20260105_061014872.jpg', 'PXL_20260105_061016571.jpg', 'PXL_20260105_063416830.jpg', 'PXL_20260105_063628052.jpg', 'PXL_20260105_064048954.jpg', 'PXL_20260105_072047207.jpg', 'PXL_20260105_072223267.jpg', 'PXL_20260105_072318059.jpg', 'PXL_20260105_072416735.jpg', 'PXL_20260105_072436430.jpg', 'PXL_20260105_072448389.jpg', 'PXL_20260105_081339662.jpg', 'PXL_20260105_081443052.jpg', 'PXL_20260105_081513315.jpg', 'PXL_20260105_081532741.jpg', 'PXL_20260105_101140991.jpg', 'PXL_20260105_132120644.jpg', 'PXL_20260105_134113833.jpg', 'PXL_20260105_134808544.jpg', 'PXL_20260105_134809469.jpg', 'PXL_20260105_144919232.jpg', 'PXL_20260105_145043287.jpg', 'PXL_20260105_145413987.jpg', 'PXL_20260105_145459456.NIGHT.jpg', 'PXL_20260106_021907092.jpg', 'PXL_20260106_021957967.jpg', 'PXL_20260106_022239960.jpg', 'PXL_20260106_022548203.jpg',  ];
-        let shuffled = [...ALL_PHOTOS].sort(() => Math.random() - 0.5);
-        let photoIdx = 0;
-        let photoInterval;
-        let isBiometricActive = false;
-        
-        // GRID COLUMNS (30% width each)
-        const COLS = [3, 35, 67]; 
-        let lastCol = -1;
+        const ALL_PHOTOS = [
+            'PXL_20250906_021905799.jpg', 'PXL_20250913_133140007.jpg', 'PXL_20250920_162538609.jpg', 'PXL_20250921_110623205.jpg',
+            'PXL_20251008_040502409.jpg', 'PXL_20251014_101226303.jpg', 'PXL_20251017_023456019.MP.jpg', 'PXL_20251019_130218312.NIGHT.jpg',
+            'PXL_20251019_130702511.NIGHT.jpg', 'PXL_20251021_104934088.jpg', 'PXL_20251022_060637296.jpg', 'PXL_20251024_124903936.jpg',
+            'PXL_20251024_124906135.MP.jpg', 'PXL_20251024_124916632.jpg', 'PXL_20251026_113317130.NIGHT.jpg', 'PXL_20251026_113327949.NIGHT.jpg',
+            'PXL_20251027_085113382.jpg', 'PXL_20251027_122411788.MP.jpg', 'PXL_20251028_115616010.jpg', 'PXL_20251031_091950675.jpg',
+            'PXL_20251102_153805991.jpg', 'PXL_20251103_161337525.jpg', 'PXL_20251103_163207980.jpg', 'PXL_20251103_163529676.jpg',
+            'PXL_20251103_163804817.MP.jpg', 'PXL_20251103_163936702.jpg', 'PXL_20251103_163941499.jpg', 'PXL_20251104_060636618.jpg',
+            'PXL_20251106_131826014.jpg', 'PXL_20251123_234406985.jpg', 'PXL_20251123_234451121.jpg', 'PXL_20251129_140019564.MP.jpg',
+            'PXL_20251129_142942873.jpg', 'PXL_20251129_142948169.jpg', 'PXL_20251129_143026708.jpg', 'PXL_20251129_143039367.jpg',
+            'PXL_20251129_143050977.MP.jpg', 'PXL_20251130_051445753-COLLAGE.jpg', 'PXL_20251130_051453816.jpg', 'PXL_20251130_051507264.jpg',
+            'PXL_20251130_091835001.MP.jpg', 'PXL_20251130_091932474.MP.jpg', 'PXL_20251130_092518680.jpg', 'PXL_20251130_092603326.MP.jpg',
+            'PXL_20251201_041404347.MP.jpg', 'PXL_20251207_070848795.jpg', 'PXL_20251207_070900630.jpg', 'PXL_20251209_043920652.MP.jpg',
+            'PXL_20251210_050753936.jpg', 'PXL_20251212_143352032.jpg', 'PXL_20251214_090837819.jpg', 'PXL_20251214_155925353.MP.jpg',
+            'PXL_20251214_160219604.jpg', 'PXL_20251214_160222707.MP.jpg', 'PXL_20251214_160233290.jpg', 'PXL_20251215_070006569.MP.jpg',
+            'PXL_20251218_120455189.jpg', 'PXL_20251220_070612145.jpg', 'PXL_20251220_070613204.jpg', 'PXL_20251220_070631900.jpg',
+            'PXL_20251220_070637895.MP.jpg', 'PXL_20251222_004419704.jpg', 'PXL_20251224_161217392.jpg', 'PXL_20251224_161219562.jpg',
+            'PXL_20251228_002003815.jpg', 'PXL_20251229_043540702.MP.jpg', 'PXL_20260102_070840989.jpg', 'PXL_20260102_070904209.MP.jpg',
+            'PXL_20260102_070915361.MP.jpg', 'PXL_20260102_071047502.MP.jpg', 'PXL_20260102_071113844.MP.jpg', 'PXL_20260102_071422344.MP.jpg',
+            'PXL_20260102_072125592.PORTRAIT.jpg', 'PXL_20260102_073559766.PORTRAIT.jpg', 'PXL_20260102_073622861.PORTRAIT.jpg',
+            'PXL_20260102_073626023.PORTRAIT.jpg', 'PXL_20260102_073807803.PORTRAIT.jpg', 'PXL_20260102_073809756.PORTRAIT.jpg',
+            'PXL_20260102_073817037.PORTRAIT.jpg', 'PXL_20260102_074136186.PORTRAIT.jpg', 'PXL_20260102_074239317.PORTRAIT.jpg',
+            'PXL_20260103_053022295.MP.jpg', 'PXL_20260103_071032461.PORTRAIT.jpg', 'PXL_20260103_074508976.jpg', 'PXL_20260103_074530845.jpg',
+            'PXL_20260103_074556639.jpg', 'PXL_20260103_074601712.jpg', 'PXL_20260103_074606471.jpg', 'PXL_20260103_074633946.jpg',
+            'PXL_20260104_001237871.jpg', 'PXL_20260104_001720018.jpg', 'PXL_20260104_001722317.jpg', 'PXL_20260104_001728589.jpg',
+            'PXL_20260104_001809885.jpg', 'PXL_20260104_004943413.PORTRAIT.jpg', 'PXL_20260104_010749097.jpg', 'PXL_20260104_011046911.jpg',
+            'PXL_20260104_011051326.jpg', 'PXL_20260104_011610049.PORTRAIT.jpg', 'PXL_20260104_020012539.jpg', 'PXL_20260104_020403817.PORTRAIT.jpg',
+            'PXL_20260104_022114612.jpg', 'PXL_20260104_022124683.jpg', 'PXL_20260104_032728334.jpg', 'PXL_20260104_032742621.PORTRAIT.jpg',
+            'PXL_20260104_040600481.jpg', 'PXL_20260104_040616005.jpg', 'PXL_20260104_042325442.jpg', 'PXL_20260104_042732058.jpg',
+            'PXL_20260104_042737635.jpg', 'PXL_20260104_042752097.jpg', 'PXL_20260104_044010633.jpg', 'PXL_20260104_044053957.jpg',
+            'PXL_20260104_044109816.jpg', 'PXL_20260104_054039294.jpg', 'PXL_20260104_054523542.jpg', 'PXL_20260104_054732262.jpg',
+            'PXL_20260104_061032241.jpg', 'PXL_20260104_125755486.jpg', 'PXL_20260104_130506402.jpg', 'PXL_20260105_045023769.jpg',
+            'PXL_20260105_045201816.jpg', 'PXL_20260105_045605720.NIGHT.jpg', 'PXL_20260105_045801730.PORTRAIT.ORIGINAL.jpg',
+            'PXL_20260105_055639096.jpg', 'PXL_20260105_055833529.jpg', 'PXL_20260105_055919088.jpg', 'PXL_20260105_060258948.jpg',
+            'PXL_20260105_060343561.jpg', 'PXL_20260105_061014872.jpg', 'PXL_20260105_061016571.jpg', 'PXL_20260105_063416830.jpg',
+            'PXL_20260105_063628052.jpg', 'PXL_20260105_064048954.jpg', 'PXL_20260105_072047207.jpg', 'PXL_20260105_072223267.jpg',
+            'PXL_20260105_072318059.jpg', 'PXL_20260105_072416735.jpg', 'PXL_20260105_072436430.jpg', 'PXL_20260105_072448389.jpg',
+            'PXL_20260105_081339662.jpg', 'PXL_20260105_081443052.jpg', 'PXL_20260105_081513315.jpg', 'PXL_20260105_081532741.jpg',
+            'PXL_20260105_101140991.jpg', 'PXL_20260105_132120644.jpg', 'PXL_20260105_134113833.jpg', 'PXL_20260105_134808544.jpg',
+            'PXL_20260105_134809469.jpg', 'PXL_20260105_144919232.jpg', 'PXL_20260105_145043287.jpg', 'PXL_20260105_145413987.jpg',
+            'PXL_20260105_145459456.NIGHT.jpg', 'PXL_20260106_021907092.jpg', 'PXL_20260106_021957967.jpg', 'PXL_20260106_022239960.jpg',
+            'PXL_20260106_022548203.jpg'
+        ];
 
         const audio = document.getElementById('bg-audio');
+        const photoSpace = document.getElementById('photo-space');
+        let shuffled = [];
+        let photoIdx = 0;
+        let laneIndex = 0;
+        let photoInterval;
+        let lastSpawnTimes = [];
+        let hasStarted = false;
 
-        function startJourney(el) {
-            audio.load();
-            audio.play().then(() => {
-                el.style.transform = "scale(0)";
-                gsap.to('#stage-1', { opacity: 0, duration: 1, onComplete: () => {
-                    document.getElementById('stage-1').classList.remove('active');
-                    startPhotos();
-                    
-                    // ESCUCHA CONSTANTE DEL TIEMPO
-                    audio.addEventListener('timeupdate', checkTime);
-                }});
-            }).catch(() => alert("Tap again"));
-        }
-
-        function checkTime() {
-            if(isBiometricActive) return;
-            // ACTIVAR CUANDO FALTEN 18 SEGUNDOS
-            if(audio.duration > 0 && audio.currentTime > (audio.duration - 18)) {
-                triggerBiometric();
+        function getLanes() {
+            const laneCount = window.innerWidth < 768 ? 3 : 4;
+            const gap = 100 / laneCount;
+            const lanes = [];
+            for (let i = 0; i < laneCount; i += 1) {
+                lanes.push(gap * i + gap / 2);
             }
+            if (lastSpawnTimes.length !== laneCount) {
+                lastSpawnTimes = new Array(laneCount).fill(0);
+            }
+            return lanes;
         }
 
-        function startPhotos() {
-            document.getElementById('stage-2').classList.add('active');
-            photoInterval = setInterval(spawnPhoto, 1400);
-            spawnPhoto();
-            
-            // SEGURO: Si a los 180 seg no ha saltado el biometric, saltar forzoso
-            setTimeout(() => { if(!isBiometricActive) triggerBiometric(); }, 180000);
-        }
-
-        function spawnPhoto() {
-            // SI EL BIOMETRIC YA ESTÁ ACTIVO, NO SACAR MÁS FOTOS
-            if(isBiometricActive) return;
-
+        function refillPhotos() {
             if (photoIdx >= shuffled.length) {
                 shuffled = [...ALL_PHOTOS].sort(() => Math.random() - 0.5);
                 photoIdx = 0;
             }
-            const src = shuffled[photoIdx++];
+        }
+
+        function nextPhoto() {
+            refillPhotos();
+            return shuffled[photoIdx++];
+        }
+
+        function canSpawnInLane(laneIdx, minIntervalMs) {
+            const now = Date.now();
+            if (now - lastSpawnTimes[laneIdx] < minIntervalMs) {
+                return false;
+            }
+            lastSpawnTimes[laneIdx] = now;
+            return true;
+        }
+
+        function spawnPhoto() {
+            const lanes = getLanes();
+            const laneCount = lanes.length;
+            const cardHeight = Math.max(230, Math.min(320, window.innerWidth * 0.26));
+            const travelDistance = window.innerHeight + 420;
+            const duration = 9.5;
+            const speed = travelDistance / duration;
+            const minIntervalMs = ((cardHeight + 50) / speed) * 1000;
+
+            let attempts = 0;
+            let lane = laneIndex % laneCount;
+            while (attempts < laneCount) {
+                if (canSpawnInLane(lane, minIntervalMs)) {
+                    laneIndex = lane + 1;
+                    break;
+                }
+                lane = (lane + 1) % laneCount;
+                attempts += 1;
+            }
+            if (attempts >= laneCount) {
+                return;
+            }
 
             const card = document.createElement('div');
             card.className = 'photo-card';
+            card.style.left = lanes[lane] + '%';
+            card.style.top = '110vh';
             const img = document.createElement('img');
-            img.src = 'assets/' + src;
+            img.src = 'assets/' + nextPhoto();
+            img.alt = 'Photo memory';
             card.appendChild(img);
-
-            // COLUMNAS (NO OVERLAP)
-            let colIdx;
-            do { colIdx = Math.floor(Math.random() * 3); } while (colIdx === lastCol);
-            lastCol = colIdx;
-            card.style.left = COLS[colIdx] + '%';
-            
-            gsap.set(card, { rotation: (Math.random()-0.5)*5 });
-            document.getElementById('photo-space').appendChild(card);
+            photoSpace.appendChild(card);
 
             gsap.to(card, {
-                y: -window.innerHeight * 1.5,
-                duration: 10, 
-                ease: "none",
+                duration,
+                ease: 'none',
+                y: -(travelDistance),
+                transform: 'translate3d(-50%, 0, 0)',
                 onComplete: () => card.remove()
             });
         }
 
-        function triggerBiometric() {
-            console.log("TRIGGERING BIOMETRIC");
-            isBiometricActive = true;
-            clearInterval(photoInterval); // Dejar de sacar fotos nuevas
-
-            // 1. MOSTRAR BIOMETRIC (Encima de las fotos que aun quedan)
-            document.getElementById('stage-3').classList.add('active');
-            gsap.to('#stage-3', { opacity: 1, duration: 0.5 });
-            gsap.to('#scanner-box', { scale: 1, duration: 0.5, ease: "back.out" });
-
-            // 2. FADE OUT DE FOTOS (Despues de que el biometric ya se vea)
-            setTimeout(() => {
-                gsap.to('#stage-2', { opacity: 0, duration: 2, onComplete: () => {
-                   document.getElementById('stage-2').classList.remove('active'); 
-                }});
-            }, 1000);
-
-            // 3. SECUENCIA DE TEXTO
-            let txt = document.getElementById('bio-msg');
-            setTimeout(() => { txt.innerText = "SCANNING DNA..."; txt.style.color="white"; }, 1500);
-            setTimeout(() => { txt.innerText = "VERIFYING..."; }, 3500);
-            setTimeout(() => { 
-                txt.innerText = "ACCESS GRANTED"; 
-                txt.style.color = "#4ade80"; 
-                document.querySelector('.scanner-ui').style.borderColor="#4ade80";
-            }, 6000);
+        function startPhotos() {
+            document.getElementById('stage-2').classList.add('active');
+            if (!shuffled.length) {
+                shuffled = [...ALL_PHOTOS].sort(() => Math.random() - 0.5);
+            }
+            spawnPhoto();
+            photoInterval = setInterval(spawnPhoto, 350);
         }
 
-        // AL TERMINAR CANCION
-        audio.addEventListener('ended', () => {
-            // Quitar todo
-            document.querySelectorAll('.stage').forEach(el => el.classList.remove('active'));
-            document.getElementById('stage-3').style.display = 'none'; // Asegurar que biometric se va
+        function cleanupPhotos() {
+            clearInterval(photoInterval);
+            gsap.killTweensOf('.photo-card');
+            photoSpace.innerHTML = '';
+        }
 
-            const finale = document.getElementById('stage-4');
-            finale.classList.add('active');
-            
-            // Animacion final
-            const tl = gsap.timeline();
-            tl.to('#stage-4', { opacity: 1, duration: 1 })
-              .to('#t1', { opacity: 1, scale: 1, duration: 1.5, ease: "back.out" })
-              .to('#t2', { opacity: 1, scale: 1, duration: 1.5, ease: "back.out" }, "-=1")
-              .to('#t3', { opacity: 1, y: 0, duration: 1 }, "-=0.5")
-              .to('#t4', { opacity: 1, duration: 1 })
-              .call(lanzarConfeti);
-        });
+        function startJourney(el) {
+            if (hasStarted) return;
+            hasStarted = true;
+            audio.load();
+            audio.play().then(() => {
+                el.style.transform = 'scale(0)';
+                gsap.to('#stage-1', {
+                    opacity: 0,
+                    duration: 1,
+                    onComplete: () => {
+                        document.getElementById('stage-1').classList.remove('active');
+                        startPhotos();
+                    }
+                });
+            }).catch(() => {
+                hasStarted = false;
+                alert('Tap again');
+            });
 
-        function lanzarConfeti() {
-            const end = Date.now() + 5000;
-            const colors = ['#ec4899', '#ffffff', '#db2777'];
+            audio.addEventListener('ended', () => {
+                if (!hasStarted) return;
+                cleanupPhotos();
+                document.querySelectorAll('.stage').forEach((el) => el.classList.remove('active'));
+
+                const finale = document.getElementById('stage-4');
+                finale.classList.add('active');
+
+                const tl = gsap.timeline();
+                tl.to('#stage-4', { opacity: 1, duration: 1 })
+                    .to('#t0', { opacity: 1, duration: 1 }, '-=0.4')
+                    .to('#t1', { opacity: 1, scale: 1, duration: 1.6, ease: 'back.out(1.4)' })
+                    .to('#t2', { opacity: 1, scale: 1, duration: 1.4, ease: 'back.out(1.4)' }, '-=1')
+                    .to('#t3', { opacity: 1, y: 0, duration: 1.2 }, '-=0.6')
+                    .to('#t4', { opacity: 1, duration: 1 }, '-=0.3')
+                    .call(launchConfetti);
+            }, { once: true });
+        }
+
+        function launchConfetti() {
+            const end = Date.now() + 6000;
+            const colors = ['#ec4899', '#ffffff', '#f472b6', '#f9a8d4', '#fbbf24'];
+            const burst = (originX) => {
+                confetti({
+                    particleCount: 80,
+                    spread: 70,
+                    angle: 90,
+                    startVelocity: 55,
+                    gravity: 0.8,
+                    origin: { x: originX, y: 0.8 },
+                    colors
+                });
+            };
+
+            burst(0.2);
+            burst(0.8);
+
             (function frame() {
-                confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: colors });
-                confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: colors });
+                confetti({
+                    particleCount: 10,
+                    spread: 120,
+                    angle: 60,
+                    startVelocity: 45,
+                    gravity: 0.9,
+                    origin: { x: 0, y: 0.9 },
+                    colors
+                });
+                confetti({
+                    particleCount: 10,
+                    spread: 120,
+                    angle: 120,
+                    startVelocity: 45,
+                    gravity: 0.9,
+                    origin: { x: 1, y: 0.9 },
+                    colors
+                });
                 if (Date.now() < end) requestAnimationFrame(frame);
             }());
         }
