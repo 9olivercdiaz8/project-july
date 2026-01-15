@@ -1,0 +1,13 @@
+services:
+  love-project:
+    build: .
+    container_name: love-project
+    restart: always
+    networks:
+      - red-vip
+    expose:
+      - "80"
+
+networks:
+  red-vip:
+    external: true
