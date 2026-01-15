@@ -361,20 +361,18 @@
         function startJourney(el) {
             if (hasStarted) return;
             hasStarted = true;
+            el.style.transform = 'scale(0)';
+            gsap.to('#stage-1', {
+                opacity: 0,
+                duration: 1,
+                onComplete: () => {
+                    document.getElementById('stage-1').classList.remove('active');
+                    startPhotos();
+                }
+            });
             audio.load();
-            audio.play().then(() => {
-                el.style.transform = 'scale(0)';
-                gsap.to('#stage-1', {
-                    opacity: 0,
-                    duration: 1,
-                    onComplete: () => {
-                        document.getElementById('stage-1').classList.remove('active');
-                        startPhotos();
-                    }
-                });
-            }).catch(() => {
-                hasStarted = false;
-                alert('Tap again');
+            audio.play().catch(() => {
+                // Allow the experience to continue even if audio autoplay is blocked.
             });
 
             audio.addEventListener('ended', () => {
