@@ -9,164 +9,51 @@
     <script src="assets/confetti.js"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
-
     <style>
-        :root {
-            color-scheme: dark;
-        }
-        * {
-            box-sizing: border-box;
-        }
+        :root { color-scheme: dark; }
+        * { box-sizing: border-box; }
         body {
-            background: radial-gradient(circle at 20% 120%, #243b55 0%, #141e30 40%, #0b0d14 100%);
+            background: radial-gradient(circle at 50% 120%, #1b2735 0%, #090a0f 100%);
             color: #fff;
             font-family: 'Montserrat', sans-serif;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
-            user-select: none;
+            height: 100vh; margin: 0; overflow: hidden; user-select: none;
         }
-        .font-cine {
-            font-family: 'Cinzel', serif;
-        }
+        .font-cine { font-family: 'Cinzel', serif; }
 
-        /* STARS */
-        .stars-container {
-            position: absolute;
-            inset: 0;
-            z-index: 0;
-            pointer-events: none;
-            overflow: hidden;
-        }
-        .star {
-            position: absolute;
-            width: var(--size);
-            height: var(--size);
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 50%;
-            opacity: 0;
-            animation: twinkle var(--dur) ease-in-out infinite;
-            filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.8));
-        }
-        .star.slow {
-            animation-duration: calc(var(--dur) * 1.7);
-        }
-        @keyframes twinkle {
-            0%, 100% {
-                opacity: 0.2;
-                transform: scale(0.6) translate3d(0, 0, 0);
-            }
-            50% {
-                opacity: 1;
-                transform: scale(1.2) translate3d(0, 0, 0);
-            }
-        }
+        /* ESTRELLAS */
+        .stars-container { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+        .star { position: absolute; width: 2px; height: 2px; background: white; border-radius: 50%; opacity: 0; animation: twinkle var(--dur) infinite; }
+        @keyframes twinkle { 0%, 100% { opacity: 0.2; transform: scale(0.5); } 50% { opacity: 1; transform: scale(1.2); } }
 
-        /* STAGES */
-        .stage {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 1s;
-        }
-        .stage.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        #stage-1 {
-            z-index: 100;
-        }
-        #stage-2 {
-            z-index: 40;
-        }
-        #stage-4 {
-            z-index: 90;
-            background: radial-gradient(circle at 50% 120%, #10131d 0%, #040407 65%, #000 100%);
-        }
+        /* CAPAS */
+        .stage { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; opacity: 0; pointer-events: none; transition: opacity 1s; }
+        .stage.active { opacity: 1; pointer-events: auto; }
+        #stage-1 { z-index: 100; }
+        #stage-2 { z-index: 40; }
+        #stage-4 { z-index: 90; background: black; }
 
         /* INTRO */
-        .gift-box {
-            width: 140px;
-            height: 140px;
-            background: linear-gradient(135deg, #ec4899, #be185d);
-            position: relative;
-            cursor: pointer;
-            box-shadow: 0 0 60px rgba(236, 72, 153, 0.6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid rgba(255, 255, 255, 0.4);
-        }
-        .ribbon-v {
-            position: absolute;
-            width: 24px;
-            height: 100%;
-            background: #fce7f3;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        .ribbon-h {
-            position: absolute;
-            height: 24px;
-            width: 100%;
-            background: #fce7f3;
-            top: 50%;
-            transform: translateY(-50%);
-        }
+        .gift-box { width: 140px; height: 140px; background: linear-gradient(135deg, #ec4899, #be185d); position: relative; cursor: pointer; box-shadow: 0 0 60px rgba(236, 72, 153, 0.6); display: flex; align-items: center; justify-content: center; border: 2px solid rgba(255,255,255,0.4); }
+        .ribbon-v { position: absolute; width: 24px; height: 100%; background: #fce7f3; left: 50%; transform: translateX(-50%); }
+        .ribbon-h { position: absolute; height: 24px; width: 100%; background: #fce7f3; top: 50%; transform: translateY(-50%); }
 
-        /* PHOTO LANES */
-        #photo-space {
-            position: absolute;
-            inset: 0;
-            overflow: hidden;
-            pointer-events: none;
-        }
+        /* FOTOS (CARRILES) */
+        #photo-space { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
         .photo-card {
             position: absolute;
-            width: clamp(170px, 18vw, 230px);
-            height: clamp(230px, 26vw, 320px);
-            background: #fff;
-            padding: 6px 6px 16px 6px;
-            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.75);
-            border-radius: 8px;
+            width: clamp(160px, 28vw, 240px); /* Tamaño controlado */
+            height: clamp(220px, 38vw, 320px);
+            background: #fff; padding: 6px 6px 16px 6px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            border-radius: 4px;
             will-change: transform;
-            transform: translate3d(-50%, 0, 0);
+            top: 110vh; /* Empiezan abajo */
         }
-        .photo-card::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: 6px;
-            height: 5px;
-            background: linear-gradient(90deg, rgba(236, 72, 153, 0.2), rgba(255, 255, 255, 0));
-            opacity: 0.5;
-        }
-        .photo-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            border-radius: 6px;
-        }
+        .photo-card img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 2px; }
 
         /* FINAL */
-        .glow-text {
-            text-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
-        }
-        .finale-card {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 24px;
-            border-radius: 18px;
-            backdrop-filter: blur(10px);
-        }
+        .glow-text { text-shadow: 0 0 30px rgba(255,255,255,0.8); }
+        .finale-card { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 24px; border-radius: 16px; backdrop-filter: blur(10px); }
     </style>
 </head>
 <body>
@@ -175,7 +62,7 @@
     <div class="stars-container" id="stars"></div>
 
     <div id="stage-1" class="stage active">
-        <p class="text-gray-300 tracking-widest text-xs uppercase mb-8 animate-pulse">Touch Gift</p>
+        <p class="text-gray-400 tracking-widest text-xs uppercase mb-8 animate-pulse">Tap Gift</p>
         <div class="gift-box" onclick="startJourney(this)">
             <div class="ribbon-v"></div><div class="ribbon-h"></div>
             <i id="play-icon" class="ph-fill ph-play text-white text-5xl relative z-10 animate-pulse"></i>
@@ -189,10 +76,8 @@
 
     <div id="stage-4" class="stage">
         <div class="relative z-10 text-center px-4">
-            <p class="uppercase tracking-[0.4em] text-xs text-pink-200 opacity-0" id="t0">For the love of my life</p>
-            <h1 class="text-5xl md:text-7xl font-cine text-white mb-6 glow-text opacity-0" id="t1">Happy Birthday</h1>
+            <h1 class="text-5xl md:text-7xl font-cine text-white mb-6 glow-text opacity-0" id="t1">Happy<br>Birthday</h1>
             <h2 class="text-3xl md:text-5xl font-cine text-pink-500 mb-8 drop-shadow-2xl opacity-0" id="t2">Mommy</h2>
-
             <div class="finale-card max-w-sm mx-auto opacity-0 transform translate-y-10" id="t3">
                 <i class="ph-fill ph-heart text-5xl text-pink-300 mb-4"></i>
                 <p class="text-lg italic font-serif text-gray-100">"Every moment with you is a treasure."</p>
@@ -202,17 +87,16 @@
     </div>
 
     <script>
+        // ESTRELLAS
         const stars = document.getElementById('stars');
-        for (let i = 0; i < 110; i += 1) {
-            const s = document.createElement('div');
-            s.className = 'star' + (Math.random() > 0.6 ? ' slow' : '');
-            s.style.top = Math.random() * 100 + '%';
-            s.style.left = Math.random() * 100 + '%';
-            s.style.setProperty('--size', (Math.random() * 2 + 1) + 'px');
-            s.style.setProperty('--dur', (Math.random() * 3 + 2) + 's');
+        for(let i=0; i<80; i++){
+            let s = document.createElement('div'); s.className='star';
+            s.style.top=Math.random()*100+'%'; s.style.left=Math.random()*100+'%';
+            s.style.setProperty('--dur', (Math.random()*3+2)+'s');
             stars.appendChild(s);
         }
 
+        // FOTOS (TODAS LAS TUYAS)
         const ALL_PHOTOS = [
             'PXL_20250906_021905799.jpg', 'PXL_20250913_133140007.jpg', 'PXL_20250920_162538609.jpg', 'PXL_20250921_110623205.jpg',
             'PXL_20251008_040502409.jpg', 'PXL_20251014_101226303.jpg', 'PXL_20251017_023456019.MP.jpg', 'PXL_20251019_130218312.NIGHT.jpg',
@@ -257,180 +141,94 @@
             'PXL_20260106_022548203.jpg'
         ];
 
-        const audio = document.getElementById('bg-audio');
-        const photoSpace = document.getElementById('photo-space');
         let shuffled = [];
         let photoIdx = 0;
-        let laneIndex = 0;
+        let lastLane = -1;
         let photoInterval;
-        let lastSpawnTimes = [];
-        let hasStarted = false;
+        let isEnded = false;
 
-        function getLanes() {
-            const laneCount = window.innerWidth < 768 ? 3 : 4;
-            const gap = 100 / laneCount;
-            const lanes = [];
-            for (let i = 0; i < laneCount; i += 1) {
-                lanes.push(gap * i + gap / 2);
-            }
-            if (lastSpawnTimes.length !== laneCount) {
-                lastSpawnTimes = new Array(laneCount).fill(0);
-            }
-            return lanes;
-        }
+        const audio = document.getElementById('bg-audio');
 
-        function refillPhotos() {
-            if (photoIdx >= shuffled.length) {
-                shuffled = [...ALL_PHOTOS].sort(() => Math.random() - 0.5);
-                photoIdx = 0;
-            }
-            return lanes;
-        }
-
-        function nextPhoto() {
-            refillPhotos();
-            return shuffled[photoIdx++];
-        }
-
-        function canSpawnInLane(laneIdx, minIntervalMs) {
-            const now = Date.now();
-            if (now - lastSpawnTimes[laneIdx] < minIntervalMs) {
-                return false;
-            }
-            lastSpawnTimes[laneIdx] = now;
-            return true;
-        }
-
-        function spawnPhoto() {
-            const lanes = getLanes();
-            const laneCount = lanes.length;
-            const cardHeight = Math.max(230, Math.min(320, window.innerWidth * 0.26));
-            const travelDistance = window.innerHeight + 420;
-            const duration = 9.5;
-            const speed = travelDistance / duration;
-            const minIntervalMs = ((cardHeight + 50) / speed) * 1000;
-
-            let attempts = 0;
-            let lane = laneIndex % laneCount;
-            while (attempts < laneCount) {
-                if (canSpawnInLane(lane, minIntervalMs)) {
-                    laneIndex = lane + 1;
-                    break;
-                }
-                lane = (lane + 1) % laneCount;
-                attempts += 1;
-            }
-            if (attempts >= laneCount) {
-                return;
-            }
-
-            const card = document.createElement('div');
-            card.className = 'photo-card';
-            card.style.left = lanes[lane] + '%';
-            card.style.top = '110vh';
-            const img = document.createElement('img');
-            img.src = 'assets/' + nextPhoto();
-            img.alt = 'Photo memory';
-            card.appendChild(img);
-            photoSpace.appendChild(card);
-
-            gsap.to(card, {
-                duration,
-                ease: 'none',
-                y: -(travelDistance),
-                transform: 'translate3d(-50%, 0, 0)',
-                onComplete: () => card.remove()
-            });
+        function startJourney(el) {
+            audio.load();
+            audio.play().then(() => {
+                el.style.transform = 'scale(0)';
+                gsap.to('#stage-1', { opacity: 0, duration: 1, onComplete: () => {
+                    document.getElementById('stage-1').classList.remove('active');
+                    startPhotos();
+                }});
+            }).catch(() => { /* Autoplay block */ });
         }
 
         function startPhotos() {
             document.getElementById('stage-2').classList.add('active');
-            if (!shuffled.length) {
-                shuffled = [...ALL_PHOTOS].sort(() => Math.random() - 0.5);
-            }
+            photoInterval = setInterval(spawnPhoto, 1200); // 1.2 segundos entre fotos
             spawnPhoto();
-            photoInterval = setInterval(spawnPhoto, 350);
         }
 
-        function cleanupPhotos() {
+        function spawnPhoto() {
+            if (isEnded) return;
+
+            // BUCLE INFINITO
+            if (photoIdx >= ALL_PHOTOS.length || shuffled.length === 0) {
+                shuffled = [...ALL_PHOTOS].sort(() => Math.random() - 0.5);
+                photoIdx = 0;
+            }
+            const src = shuffled[photoIdx++];
+
+            // CARRILES (3 COLUMNAS)
+            const lanes = [10, 50, 90]; // Centros de columna en %
+            let laneIdx;
+            do { laneIdx = Math.floor(Math.random() * lanes.length); } while (laneIdx === lastLane);
+            lastLane = laneIdx;
+
+            const card = document.createElement('div');
+            card.className = 'photo-card';
+            // Ajustar posición para centrar el div
+            card.style.left = lanes[laneIdx] + '%';
+            
+            const img = document.createElement('img');
+            img.src = 'assets/' + src;
+            card.appendChild(img);
+
+            document.getElementById('photo-space').appendChild(card);
+
+            // ANIMACIÓN (SUBIR)
+            gsap.to(card, {
+                y: -window.innerHeight * 1.5,
+                duration: 10,
+                ease: "none",
+                onComplete: () => card.remove()
+            });
+        }
+
+        // AL ACABAR LA CANCIÓN
+        audio.addEventListener('ended', () => {
+            isEnded = true;
             clearInterval(photoInterval);
-            gsap.killTweensOf('.photo-card');
-            photoSpace.innerHTML = '';
-        }
+            
+            // Limpiar fotos
+            gsap.to('#stage-2', { opacity: 0, duration: 1 });
 
-        function startJourney(el) {
-            if (hasStarted) return;
-            hasStarted = true;
-            el.style.transform = 'scale(0)';
-            gsap.to('#stage-1', {
-                opacity: 0,
-                duration: 1,
-                onComplete: () => {
-                    document.getElementById('stage-1').classList.remove('active');
-                    startPhotos();
-                }
-            });
-            audio.load();
-            audio.play().catch(() => {
-                // Allow the experience to continue even if audio autoplay is blocked.
-            });
-
-            audio.addEventListener('ended', () => {
-                if (!hasStarted) return;
-                cleanupPhotos();
-                document.querySelectorAll('.stage').forEach((el) => el.classList.remove('active'));
-
-                const finale = document.getElementById('stage-4');
-                finale.classList.add('active');
-
-                const tl = gsap.timeline();
-                tl.to('#stage-4', { opacity: 1, duration: 1 })
-                    .to('#t0', { opacity: 1, duration: 1 }, '-=0.4')
-                    .to('#t1', { opacity: 1, scale: 1, duration: 1.6, ease: 'back.out(1.4)' })
-                    .to('#t2', { opacity: 1, scale: 1, duration: 1.4, ease: 'back.out(1.4)' }, '-=1')
-                    .to('#t3', { opacity: 1, y: 0, duration: 1.2 }, '-=0.6')
-                    .to('#t4', { opacity: 1, duration: 1 }, '-=0.3')
-                    .call(launchConfetti);
-            }, { once: true });
-        }
+            // Mostrar final
+            const finale = document.getElementById('stage-4');
+            finale.classList.add('active');
+            
+            const tl = gsap.timeline();
+            tl.to('#stage-4', { opacity: 1, duration: 1 })
+              .to('#t1', { opacity: 1, scale: 1, duration: 1.5, ease: 'back.out' })
+              .to('#t2', { opacity: 1, scale: 1, duration: 1.5, ease: 'back.out' }, '-=1')
+              .to('#t3', { opacity: 1, y: 0, duration: 1 }, '-=0.5')
+              .to('#t4', { opacity: 1, duration: 1 })
+              .call(launchConfetti);
+        });
 
         function launchConfetti() {
-            const end = Date.now() + 6000;
-            const colors = ['#ec4899', '#ffffff', '#f472b6', '#f9a8d4', '#fbbf24'];
-            const burst = (originX) => {
-                confetti({
-                    particleCount: 80,
-                    spread: 70,
-                    angle: 90,
-                    startVelocity: 55,
-                    gravity: 0.8,
-                    origin: { x: originX, y: 0.8 },
-                    colors
-                });
-            };
-
-            burst(0.2);
-            burst(0.8);
-
+            const end = Date.now() + 5000;
+            const colors = ['#ec4899', '#ffffff', '#fbbf24'];
             (function frame() {
-                confetti({
-                    particleCount: 10,
-                    spread: 120,
-                    angle: 60,
-                    startVelocity: 45,
-                    gravity: 0.9,
-                    origin: { x: 0, y: 0.9 },
-                    colors
-                });
-                confetti({
-                    particleCount: 10,
-                    spread: 120,
-                    angle: 120,
-                    startVelocity: 45,
-                    gravity: 0.9,
-                    origin: { x: 1, y: 0.9 },
-                    colors
-                });
+                confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors });
+                confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors });
                 if (Date.now() < end) requestAnimationFrame(frame);
             }());
         }
